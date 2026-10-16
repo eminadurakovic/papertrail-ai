@@ -1,7 +1,7 @@
 """Embedding a paper's passages and storing the vectors in Postgres (pgvector).
 
 Re-indexing is safe: every passage's embedding is simply overwritten, in one
-transaction. Re-processing a paper (Stage 3) replaces its passages, which removes
+transaction. Re-processing a paper replaces its passages, which removes
 their embeddings, so the paper goes back to PROCESSED until it is indexed again.
 """
 

@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 class PaperStatus(StrEnum):
     """Where a paper is in the pipeline."""
 
-    IMPORTED = "imported"  # metadata stored (Stage 2)
-    PROCESSED = "processed"  # PDF text extracted and chunked into passages (Stage 3)
-    INDEXED = "indexed"  # passages have embeddings (Stage 4)
+    IMPORTED = "imported"  # metadata stored
+    PROCESSED = "processed"  # PDF text extracted and chunked into passages
+    INDEXED = "indexed"  # passages have embeddings
     FAILED = "failed"  # the last processing attempt failed
 
 

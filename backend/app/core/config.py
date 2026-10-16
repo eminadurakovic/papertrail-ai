@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     embedding_batch_size: int = Field(default=32, gt=0)
 
     # Passages scoring below this cosine similarity are not used as evidence; if none
-    # remain, /ask abstains. Calibrated by hand on a few queries (see README, "Abstention").
+    # remain, /ask abstains. A heuristic chosen from a few queries; see docs/MANUAL_EVALUATION.md.
     rag_min_score: float = Field(default=0.70, ge=-1.0, le=1.0)
 
     # Which language model generates answers. "none" = answer generation disabled.
