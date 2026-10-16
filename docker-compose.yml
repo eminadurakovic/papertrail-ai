@@ -1,0 +1,22 @@
+services:
+  db:
+    # PostgreSQL 17 with the pgvector extension preinstalled.
+    image: pgvector/pgvector:0.8.0-pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-papertrail}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-papertrail}
+      POSTGRES_DB: ${POSTGRES_DB:-papertrail}
+    ports:
+      # Bound to localhost only. Host port defaults to 5433 to avoid clashing
+      # with other local Postgres instances on 5432.
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
