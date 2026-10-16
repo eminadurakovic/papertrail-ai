@@ -7,6 +7,14 @@ relevant is found it says so instead of guessing.
 Runs entirely on your machine: PostgreSQL + pgvector, a local embedding model, and a local LLM
 through Ollama. No paid APIs.
 
+It's designed as a **data engineering + AI engineering** project, with a data pipeline at the bottom
+and an AI layer on top:
+
+- **Data engineering:** arXiv ingestion with validation and idempotent imports, a PostgreSQL schema
+  with Alembic migrations, PDF text extraction, deterministic chunking, and an ingestion audit log.
+- **AI engineering:** local embeddings, pgvector similarity search, retrieval-augmented generation
+  with a local LLM, citation checking, and abstention when the evidence is weak.
+
 ![Ask page with an answer and the cited passage](docs/images/ask-citation.png)
 
 ## How it works
