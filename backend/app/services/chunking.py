@@ -1,15 +1,4 @@
-"""Text cleanup and deterministic chunking. Pure functions: no I/O, no randomness.
-
-Chunking algorithm (sliding window over words):
-  1. Split all pages into one list of words, remembering each word's page number.
-  2. Take `size` words as a chunk, then move the window forward by `size - overlap`.
-  3. Stop once a window reaches the last word.
-
-Example with size=5, overlap=2 (step=3), words a..h:
-    chunk 0: a b c d e
-    chunk 1:       d e f g h    <- "d e" is the overlap
-Same input + same settings => exactly the same chunks.
-"""
+"""Text cleanup and fixed-size word chunking with overlap."""
 
 import re
 import unicodedata
@@ -28,7 +17,7 @@ class Chunk:
 
 def clean_text(text: str) -> str:
     """Normalize extracted PDF text into single-spaced plain text."""
-    # NFKC turns typographic ligatures like "ﬁ" into "fi" and full-width forms into ASCII.
+    # NFKC turns ligatures like "ﬁ" into "fi".
     text = unicodedata.normalize("NFKC", text)
     text = _HYPHENATED_LINE_BREAK.sub(r"\1\2", text)
     # Postgres TEXT cannot store NUL bytes; other control characters are just noise.

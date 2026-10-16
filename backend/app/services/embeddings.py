@@ -1,14 +1,4 @@
-"""Turning text into embedding vectors.
-
-The rest of the app only depends on the small `Embedder` interface, so tests can use
-a fast deterministic fake and the real model is only loaded when actually needed.
-
-The real implementation runs BAAI/bge-small-en-v1.5 (an ONNX export, MIT license)
-locally on the CPU:
-    text -> tokenizer -> token IDs -> model -> one 384-d vector per token
-         -> take the [CLS] token's vector ("CLS pooling", how bge was trained)
-         -> scale to length 1 (so cosine similarity becomes a simple dot product)
-"""
+"""Text embeddings with bge-small-en-v1.5 (ONNX, CLS pooling, unit-length vectors)."""
 
 import logging
 from pathlib import Path

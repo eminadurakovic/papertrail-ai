@@ -1,9 +1,4 @@
-"""Shared test fixtures.
-
-Database tests run against a separate `<POSTGRES_DB>_test` database in the local
-Docker Postgres. The schema is built with the real Alembic migrations, and every
-test runs inside a transaction that is rolled back afterwards.
-"""
+"""Test fixtures: a separate test database built with Alembic; each test is rolled back."""
 
 from collections.abc import Iterator
 from pathlib import Path

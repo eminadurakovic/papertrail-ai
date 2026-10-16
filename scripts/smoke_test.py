@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
-"""End-to-end smoke test against a RUNNING backend (standard library only).
+"""End-to-end smoke test against a running backend.
 
-    python3 scripts/smoke_test.py [--api-url http://localhost:8001] [--arxiv-id 1706.03762]
-
-Steps: health -> import -> process -> index -> semantic search -> answerable question
-(its citations must point to real stored passages) -> unrelated question (must abstain).
-
-It contacts arXiv (one metadata request and one PDF download) only if the paper is not
-imported yet, and uses the configured language model for one question. Exit code 0 means
-every step passed; skipped steps are reported separately and are never counted as passed.
-"""
+Usage: python3 scripts/smoke_test.py [--api-url URL] [--arxiv-id ID]"""
 
 from __future__ import annotations
 

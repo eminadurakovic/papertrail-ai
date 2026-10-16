@@ -1,9 +1,4 @@
-"""Embedding a paper's passages and storing the vectors in Postgres (pgvector).
-
-Re-indexing is safe: every passage's embedding is simply overwritten, in one
-transaction. Re-processing a paper replaces its passages, which removes
-their embeddings, so the paper goes back to PROCESSED until it is indexed again.
-"""
+"""Embed a paper's passages and store the vectors."""
 
 import logging
 from dataclasses import dataclass
@@ -36,7 +31,7 @@ class IndexResult:
 
 
 def index_paper(db: Session, paper_id: int, embedder: Embedder) -> IndexResult:
-    # Lock the paper so indexing can't interleave with re-processing of the same paper.
+    # Lock the paper so indexing and re-processing don't overlap.
     paper = db.get(Paper, paper_id, with_for_update=True)
     if paper is None:
         raise PaperNotFoundError(f"Paper {paper_id} not found")

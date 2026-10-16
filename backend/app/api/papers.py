@@ -27,8 +27,7 @@ from app.services.pdf import PdfDownloadError, PdfUnavailableError, Unprocessabl
 
 router = APIRouter(prefix="/papers", tags=["papers"])
 
-# Each known failure maps to one HTTP status. The exception message is user-friendly;
-# stack traces only go to the server log.
+# Known errors and their HTTP status codes.
 ErrorTable = dict[type[Exception], int]
 
 IMPORT_ERRORS: ErrorTable = {

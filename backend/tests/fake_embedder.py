@@ -1,9 +1,4 @@
-"""A deterministic stand-in for the embedding model, used by almost all tests.
-
-Each word is hashed to one of the 384 dimensions ("bag of words"), then the vector is
-normalized. Texts sharing words get similar vectors, which is enough to test storage
-and retrieval logic without loading a real model.
-"""
+"""Deterministic bag-of-words embedder for tests (hashed words, normalized)."""
 
 import hashlib
 

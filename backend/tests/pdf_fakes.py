@@ -10,11 +10,7 @@ def _escape(text: str) -> str:
 
 
 def make_pdf(pages: list[list[str]]) -> bytes:
-    """Build a minimal PDF where each page is a list of text lines (Helvetica, Latin-1).
-
-    A page with no lines is blank, which is how a scanned (image-only) page looks to
-    a text extractor.
-    """
+    """Build a small PDF where each page is a list of text lines (an empty page has no text)."""
     page_ids = [4 + 2 * index for index in range(len(pages))]
     kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
     objects: list[bytes] = [

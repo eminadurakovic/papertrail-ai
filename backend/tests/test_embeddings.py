@@ -1,8 +1,4 @@
-"""Tests for the embedding service.
-
-Most tests use no model. Tests marked `model` load the real local ONNX model; they are
-excluded by default and run with:  pytest -m model
-"""
+"""Embedding tests. The `model` tests load the real model: pytest -m model"""
 
 from pathlib import Path
 

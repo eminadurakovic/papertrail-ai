@@ -2,8 +2,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// The browser only talks to this dev server. Requests to /api/* are forwarded to the
-// FastAPI backend, so the backend needs no CORS configuration.
+// Forward /api/* to the backend, so no CORS setup is needed.
 const apiProxy = {
   '/api': {
     target: process.env.API_URL ?? 'http://localhost:8001',

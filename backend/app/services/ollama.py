@@ -1,8 +1,4 @@
-"""LLMClient implementation for a local Ollama server (https://ollama.com).
-
-Ollama runs open-weight models on this machine and exposes an HTTP API on
-localhost:11434. We call POST /api/chat once per question, without streaming.
-"""
+"""LLMClient for a local Ollama server (POST /api/chat)."""
 
 import logging
 

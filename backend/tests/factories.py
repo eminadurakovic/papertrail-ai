@@ -33,7 +33,6 @@ def make_paper(
         ],
     )
     db.add(paper)
-    # Commit like the real import does, so a rollback inside the code under test
-    # doesn't also undo the paper. (The test's outer transaction still discards it.)
+    # Commit like the real import does; the test's outer transaction still rolls it back.
     db.commit()
     return paper

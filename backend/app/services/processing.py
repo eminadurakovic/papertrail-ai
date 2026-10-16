@@ -1,12 +1,4 @@
-"""Turning a stored paper into retrieval-ready passages.
-
-Pipeline: download PDF -> extract + clean text per page -> chunk -> replace passages.
-
-Re-processing is safe: old passages are deleted and new ones inserted in one
-transaction, and chunking is deterministic, so the same PDF and settings give the
-same passages. If processing fails, the paper is marked FAILED with the reason and
-any passages from an earlier successful run are left untouched.
-"""
+"""Download a paper's PDF, extract the text and rebuild its passages."""
 
 import logging
 from dataclasses import dataclass
@@ -79,12 +71,10 @@ def process_paper(
 
 
 def _replace_passages(db: Session, paper: Paper, chunks: list[Chunk]) -> None:
-    # Lock the paper row so two simultaneous "process" requests run one after the other
-    # instead of both inserting passages with the same positions.
+    # Lock the paper row so concurrent process requests run one at a time.
     db.refresh(paper, with_for_update=True)
 
-    # Delete first and flush, so the new rows never clash with the old ones on the
-    # UNIQUE (paper_id, position) constraint.
+    # Delete and flush first to avoid clashing with UNIQUE (paper_id, position).
     db.execute(delete(Passage).where(Passage.paper_id == paper.id))
     db.expire(paper, ["passages"])
     db.add_all(
@@ -95,8 +85,7 @@ def _replace_passages(db: Session, paper: Paper, chunks: list[Chunk]) -> None:
 
 
 def mark_failed(db: Session, paper: Paper, message: str) -> None:
-    """Record why the last step failed. Best effort: if the database itself is broken,
-    recording the failure can fail too. Shared by processing and indexing."""
+    """Mark the paper as failed. Best effort: this can fail too if the database is down."""
     try:
         paper.ingestion_status = PaperStatus.FAILED
         paper.processing_error = message

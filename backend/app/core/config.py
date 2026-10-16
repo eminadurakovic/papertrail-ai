@@ -35,9 +35,7 @@ class Settings(BaseSettings):
     pdf_timeout_seconds: float = 60.0
     pdf_max_bytes: int = 30_000_000
 
-    # ~150 words is roughly 200 tokens: small enough for typical embedding models,
-    # big enough to hold a complete thought. The overlap keeps sentences that straddle
-    # a boundary findable from both sides.
+    # ~150 words is about 200 tokens, within the embedding model's limit.
     chunk_size_words: int = Field(default=150, gt=0)
     chunk_overlap_words: int = Field(default=30, ge=0)
 
@@ -45,8 +43,7 @@ class Settings(BaseSettings):
     embedding_model_dir: Path = PROJECT_ROOT / "models" / "bge-small-en-v1.5"
     embedding_batch_size: int = Field(default=32, gt=0)
 
-    # Passages scoring below this cosine similarity are not used as evidence; if none
-    # remain, /ask abstains. A heuristic chosen from a few queries; see docs/MANUAL_EVALUATION.md.
+    # Passages below this similarity aren't used as evidence (see docs/MANUAL_EVALUATION.md).
     rag_min_score: float = Field(default=0.70, ge=-1.0, le=1.0)
 
     # Which language model generates answers. "none" = answer generation disabled.
@@ -63,10 +60,7 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> URL:
-        """SQLAlchemy URL for PostgreSQL using the psycopg (v3) driver.
-
-        Built with URL.create so special characters in the password are escaped safely.
-        """
+        """SQLAlchemy URL for psycopg. URL.create escapes special characters in the password."""
         return URL.create(
             drivername="postgresql+psycopg",
             username=self.postgres_user,

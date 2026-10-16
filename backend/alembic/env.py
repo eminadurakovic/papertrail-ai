@@ -1,8 +1,4 @@
-"""Alembic migration environment.
-
-The database URL comes from app settings (.env), and target_metadata comes from our
-SQLAlchemy Base so `alembic revision --autogenerate` can compare models to the database.
-"""
+"""Alembic environment: database URL from app settings, metadata from the ORM models."""
 
 from logging.config import fileConfig
 

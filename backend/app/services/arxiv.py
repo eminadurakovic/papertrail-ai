@@ -1,11 +1,6 @@
-"""Fetching and normalizing paper metadata from the public arXiv API.
+"""Fetch and parse paper metadata from the arXiv API.
 
-API docs: https://info.arxiv.org/help/api/user-manual.html
-The API returns an Atom XML feed. Observed behaviour:
-  - existing paper  -> HTTP 200, one <entry>
-  - unknown ID      -> HTTP 200, zero <entry> elements
-  - malformed ID    -> HTTP 400, an "Error" <entry> whose <id> contains /api/errors
-"""
+Unknown IDs return HTTP 200 with no entries; malformed IDs return HTTP 400."""
 
 import re
 import time
@@ -70,11 +65,7 @@ class ArxivMetadata(BaseModel):
 
 
 def normalize_arxiv_id(raw: str) -> str:
-    """Return the canonical, version-less arXiv ID, or raise InvalidArxivIdError.
-
-    Accepts optional surrounding whitespace, an "arXiv:" prefix and a version suffix
-    ("2403.12345v2"). The version is dropped so that every version maps to one paper.
-    """
+    """Canonical ID without version suffix or "arXiv:" prefix; raises InvalidArxivIdError."""
     value = raw.strip()
     if value.lower().startswith("arxiv:"):
         value = value[len("arxiv:") :]
@@ -168,7 +159,7 @@ class ArxivClient:
     def fetch_metadata(self, arxiv_id: str) -> ArxivMetadata:
         response = self._get(arxiv_id)
         if response.status_code == 429:
-            # Rate limited: wait once, then try again. A second 429 is reported to the user.
+            # Rate limited: wait once and retry.
             self._sleep(_retry_delay(response))
             response = self._get(arxiv_id)
 

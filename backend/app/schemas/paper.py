@@ -1,5 +1,4 @@
-"""API response shapes for papers. Kept separate from ORM models on purpose:
-the database layout can change without silently changing the public API."""
+"""API schemas for papers."""
 
 from datetime import date, datetime
 

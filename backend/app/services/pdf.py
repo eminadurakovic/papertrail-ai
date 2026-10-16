@@ -1,8 +1,4 @@
-"""Downloading PDFs and extracting their text.
-
-PDFs are kept in memory only (never written to disk), so no temporary files accumulate.
-OCR is deliberately not supported: scanned, image-only PDFs fail with a clear message.
-"""
+"""Download PDFs into memory and extract their text. No OCR."""
 
 import logging
 from io import BytesIO

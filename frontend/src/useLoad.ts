@@ -15,11 +15,7 @@ interface Settled<T> {
   version: number
 }
 
-/**
- * Calls `load` on mount and whenever `load` changes; `reload()` calls it again.
- * Pass a stable function (a module-level function, or one wrapped in useCallback).
- * While reloading, the previous data stays visible.
- */
+/** Loads data when `load` changes (pass a stable function); `reload()` fetches again. */
 export function useLoad<T>(load: () => Promise<T>): LoadState<T> {
   const [version, setVersion] = useState(0)
   const [settled, setSettled] = useState<Settled<T> | null>(null)

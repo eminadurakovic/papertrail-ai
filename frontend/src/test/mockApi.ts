@@ -14,11 +14,7 @@ export interface Call {
   body: unknown
 }
 
-/**
- * Replaces global fetch. Routes are keyed "METHOD /path" (without the /api prefix and query
- * string). A route can be a response or a function returning one, possibly asynchronously.
- * Returns the list of calls, so tests can check what the UI sent.
- */
+/** Stubs fetch with routes keyed "METHOD /path" and returns the recorded calls. */
 export function mockApi(routes: Record<string, Route>): Call[] {
   const calls: Call[] = []
   vi.stubGlobal(

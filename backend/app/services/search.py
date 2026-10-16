@@ -1,14 +1,4 @@
-"""Semantic search over indexed passages with pgvector.
-
-Similarity metric: cosine similarity, computed in Postgres as
-    score = 1 - (embedding <=> query)        (<=> is pgvector's cosine distance)
-Scores range from -1 to 1; higher means more similar. Our vectors are normalized, so this
-equals the dot product. Ties are broken by passage ID so results are fully deterministic.
-
-The search is exact (every indexed passage is compared). For a local corpus of a few
-thousand passages this takes milliseconds; an approximate index (HNSW) only pays off at
-a much larger scale and would make results slightly non-exact.
-"""
+"""Exact cosine-similarity search over passage embeddings (score = 1 - cosine distance)."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

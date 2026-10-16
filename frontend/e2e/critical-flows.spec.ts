@@ -3,8 +3,7 @@ import { expect, test } from '@playwright/test'
 const ARXIV_ID = '1706.03762'
 const TITLE = 'Attention Is All You Need'
 
-// Make sure one known paper exists and is indexed. Importing is idempotent, so this only
-// contacts arXiv the first time; afterwards it is a no-op.
+// Ensure the test paper exists and is indexed (import is idempotent).
 test.beforeAll(async ({ request }) => {
   const imported = await request.post('/api/papers/import', { data: { arxiv_id: ARXIV_ID } })
   expect(imported.ok()).toBeTruthy()

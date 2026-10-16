@@ -1,7 +1,6 @@
 import { defineConfig } from '@playwright/test'
 
-// End-to-end tests against the REAL stack: PostgreSQL (docker compose up -d), the FastAPI
-// backend, the Vite dev server and, for answers, Ollama. Run with: npm run e2e
+// E2E tests against the real stack (Postgres, backend, Vite, Ollama). Run: npm run e2e
 export default defineConfig({
   testDir: './e2e',
   timeout: 120_000, // a local LLM answer can take a while

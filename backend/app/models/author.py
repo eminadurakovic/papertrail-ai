@@ -15,8 +15,7 @@ class Author(Base):
     __tablename__ = "authors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # Simplification: authors are identified by their exact name, so two different
-    # people with the same name share one row. Good enough for a single-source app.
+    # Authors are matched by exact name (two people with the same name share a row).
     name: Mapped[str] = mapped_column(String(300), unique=True)
 
     paper_links: Mapped[list[PaperAuthor]] = relationship(back_populates="author")

@@ -11,8 +11,7 @@ from app.db.base import Base, TimestampMixin
 if TYPE_CHECKING:
     from app.models.paper import Paper
 
-# Output size of the embedding model (bge-small-en-v1.5). Changing the model to one
-# with a different size requires a migration and re-indexing every paper.
+# Output size of bge-small-en-v1.5. A different model needs a migration and re-indexing.
 EMBEDDING_DIMENSION = 384
 
 

@@ -1,8 +1,4 @@
-"""The minimal interface the RAG layer needs from a language model.
-
-Anything with `model_name` and `complete(system, user) -> str` works. Tests use a
-deterministic fake; a real provider is plugged in through configuration.
-"""
+"""Minimal LLM interface used by the RAG service."""
 
 from typing import Protocol
 

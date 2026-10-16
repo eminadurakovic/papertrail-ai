@@ -34,8 +34,7 @@ class Paper(TimestampMixin, Base):
     source_url: Mapped[str] = mapped_column(String(500))
     pdf_url: Mapped[str] = mapped_column(String(500))
     ingestion_status: Mapped[PaperStatus] = mapped_column(
-        # Stored as plain text with a CHECK constraint (not a native Postgres enum),
-        # which keeps adding a new status a simple migration.
+        # Plain text + CHECK constraint instead of a Postgres enum, so adding a status is easy.
         Enum(
             PaperStatus,
             name="ingestion_status",

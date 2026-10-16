@@ -13,10 +13,7 @@ interface Props {
 
 type Step = 'idle' | 'processing' | 'indexing'
 
-/**
- * Runs the remaining pipeline steps for a paper:
- * imported/failed -> process (PDF to passages) -> index (embeddings); processed -> index.
- */
+/** Runs the missing pipeline steps: process (if needed), then index. */
 export function PaperActions({ paperId, status, onChanged, allowRerun = false }: Props) {
   const [step, setStep] = useState<Step>('idle')
   const [error, setError] = useState<string | null>(null)

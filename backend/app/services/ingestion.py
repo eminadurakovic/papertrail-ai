@@ -1,14 +1,7 @@
-"""Importing arXiv paper metadata into the database.
+"""Import arXiv metadata into the database.
 
-Pipeline: validate ID -> skip if already stored -> fetch metadata -> store paper and
-authors -> record the outcome in ingestion_runs.
-
-Idempotency comes from three things:
-  1. the version-less canonical arXiv ID (2403.12345v1 and 2403.12345 are the same paper),
-  2. checking for an existing paper before calling arXiv,
-  3. database constraints as the final guard (unique arxiv_id, unique author name,
-     paper_authors primary key), so even two simultaneous imports cannot create duplicates.
-"""
+Idempotent: an existing paper is returned as-is, and unique constraints catch concurrent
+duplicate imports."""
 
 import logging
 from dataclasses import dataclass
@@ -68,8 +61,7 @@ def _fetch_and_store(db: Session, requested_id: str, arxiv: ArxivClient) -> Impo
 
     metadata = arxiv.fetch_metadata(arxiv_id)
     try:
-        # Savepoint: if a parallel request inserted the same paper in the meantime,
-        # only this block is rolled back and we can return the stored paper instead.
+        # Savepoint, so a concurrent insert of the same paper only rolls back this block.
         with db.begin_nested():
             paper = _store_paper(db, metadata)
     except IntegrityError:
@@ -104,11 +96,7 @@ def _store_paper(db: Session, metadata: ArxivMetadata) -> Paper:
 
 
 def _get_or_create_author_ids(db: Session, names: list[str]) -> list[int]:
-    """Return author IDs in the same order as `names`, inserting missing authors.
-
-    INSERT ... ON CONFLICT DO NOTHING lets Postgres skip names that already exist,
-    which is safe even if another import adds the same author at the same moment.
-    """
+    """Author IDs in the order of `names`; inserts missing ones (ON CONFLICT DO NOTHING)."""
     db.execute(
         pg_insert(Author)
         .values([{"name": name} for name in names])
@@ -120,7 +108,7 @@ def _get_or_create_author_ids(db: Session, names: list[str]) -> list[int]:
 
 
 def _start_run(db: Session, requested_id: str) -> IngestionRun:
-    # Committed immediately, so the attempt is recorded even if everything after it fails.
+    # Commit now so the attempt is recorded even if the import fails.
     run = IngestionRun(requested_arxiv_id=requested_id.strip()[:100])
     db.add(run)
     db.commit()
@@ -142,5 +130,5 @@ def _record_failure(db: Session, run: IngestionRun, message: str) -> None:
         _finish_run(db, run, IngestionRunStatus.FAILED, message)
     except SQLAlchemyError:
         db.rollback()
-        # Don't touch run attributes here: after a rollback they would trigger a new query.
+        # Don't read run attributes here; after a rollback that would query the broken DB.
         logger.exception("Could not record failed ingestion run (%s)", message)

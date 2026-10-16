@@ -1,18 +1,4 @@
-"""Retrieval-augmented generation: answer a question from the imported papers, with citations.
-
-    question
-      -> semantic search (top_k passages)
-      -> keep passages with score >= min_score        (no passage left -> abstain, no LLM call)
-      -> numbered context [1]..[n] + grounding instructions
-      -> LLM
-      -> model said INSUFFICIENT_EVIDENCE?               (yes -> abstain)
-      -> parse [n] citations; drop numbers that don't exist
-      -> no valid citation left?                          (yes -> abstain: answer not grounded)
-      -> answer + citations, each mapping to a real stored passage
-
-Abstention is deliberately simple: a similarity threshold plus the model's own
-"insufficient evidence" signal plus a citation requirement. There is no separate verifier.
-"""
+"""Answer questions from retrieved passages, with citations and abstention."""
 
 import re
 from collections.abc import Sequence
@@ -114,14 +100,12 @@ def build_user_prompt(question: str, evidence: list[SearchHit]) -> str:
         + f")\n{hit.text}"
         for number, hit in enumerate(evidence, start=1)
     )
-    # Small local models follow instructions near the end of the prompt more reliably than
-    # the system prompt alone (measured: LaTeX appeared in every reply without this line).
+    # qwen2.5 ignored the plain-text rule unless it was repeated at the end.
     return f"Passages:\n\n{passages}\n\nQuestion: {question}\n\n{FINAL_REMINDER}\n\nAnswer:"
 
 
 def extract_citations(text: str, valid_numbers: range) -> tuple[str, list[int]]:
-    """Return the answer with invalid citations removed, and the valid citation numbers
-    in order of first appearance. Grouped citations like [1, 3] become [1][3]."""
+    """Drop invalid [n] markers; return the cleaned text and the cited numbers in order."""
     cited: list[int] = []
 
     def rewrite(match: re.Match[str]) -> str:
