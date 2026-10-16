@@ -311,6 +311,7 @@ papertrail-ai/
 ├── docs/           ARCHITECTURE.md, MANUAL_EVALUATION.md, images/
 ├── docker-compose.yml
 ├── .env.example
+├── LICENSE
 └── README.md
 ```
 
@@ -340,3 +341,9 @@ These are deliberate scope choices, not hidden defects.
 - **Reproducibility.** The frontend has a lockfile; Python dependencies have lower bounds only. Embedding model
   and Ollama model are downloaded manually.
 - **Exact vector search** is fine for thousands of passages, not for millions.
+
+## License
+
+The PaperTrail AI source code is released under the [MIT License](LICENSE). The models it uses are
+not part of this repository and remain under their own licenses: `bge-small-en-v1.5` (MIT) and
+`qwen2.5:7b` (Apache-2.0) are downloaded separately by the user, and no model weights are committed.
